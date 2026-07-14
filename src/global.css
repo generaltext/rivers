@@ -1,0 +1,124 @@
+@import 'tailwindcss';
+
+/* Class-based dark mode: the shell toggles `.dark` on <html> (runtime 1.8+);
+   standalone/demo toggles it via use-theme.ts. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Rivers identity: the MAP is the hero. The background is a calm sea; land
+   recedes into a muted tone so the rivers read as the figure. Unvisited rivers
+   are a quiet grey; visited ones warm into each person's colour. Chrome is a set
+   of glassy floating panels over the map. */
+@theme {
+  --color-bg: #eef2f6;
+  --color-fg: #16202a;
+  --color-fg2: #45525f;
+  --color-fg3: #6d7a87;
+  --color-fg4: #9aa6b2;
+  --color-panel: #ffffff;
+  --color-panel-2: #f1f5f9;
+  --color-line: #e2e8ee;
+  --color-line2: #cdd6df;
+  --color-glass: rgba(255, 255, 255, 0.8);
+  --color-glass-line: rgba(15, 30, 45, 0.1);
+
+  --color-accent: #0284c7; /* sky-600 */
+  --color-accent-fg: #ffffff;
+  --color-accent-soft: rgba(2, 132, 199, 0.1);
+  --color-accent-tint: rgba(2, 132, 199, 0.12);
+  --color-good: #0e9f6e;
+  --color-warn: #b07d10;
+  --color-bad: #dc4a3d;
+
+  /* map */
+  --color-sea: #dbe6ee;
+  --color-land: #eaf0f4;
+  --color-land-line: #d3dde4;
+  --color-river: #9fb1bf; /* unvisited rivers: a quiet grey-blue */
+  --color-river-hi: #64748b; /* hovered unvisited river */
+  --color-grat: rgba(30, 50, 70, 0.05);
+
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'JetBrains Mono', Menlo, Consolas, monospace;
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+    --color-bg: #0a0f14;
+    --color-fg: #eaf1f7;
+    --color-fg2: #aeb9c4;
+    --color-fg3: #7d8894;
+    --color-fg4: #55606b;
+    --color-panel: #131a21;
+    --color-panel-2: #1b242d;
+    --color-line: #232e38;
+    --color-line2: #33404b;
+    --color-glass: rgba(15, 22, 29, 0.74);
+    --color-glass-line: rgba(255, 255, 255, 0.08);
+
+    --color-accent: #38bdf8; /* sky-400 */
+    --color-accent-fg: #06131c;
+    --color-accent-soft: rgba(56, 189, 248, 0.14);
+    --color-accent-tint: rgba(56, 189, 248, 0.16);
+    --color-good: #34d399;
+    --color-warn: #d6a94e;
+    --color-bad: #f0645a;
+
+    --color-sea: #0a1218;
+    --color-land: #141e26;
+    --color-land-line: #24303a;
+    --color-river: #3c4a57; /* unvisited rivers: dim on the dark sea */
+    --color-river-hi: #6b7c8b;
+    --color-grat: rgba(150, 180, 210, 0.06);
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background-color: var(--color-sea);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow: hidden;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+    border-radius: 4px;
+  }
+
+  dialog {
+    color: var(--color-fg);
+  }
+  dialog::backdrop {
+    background: rgba(6, 12, 18, 0.5);
+    backdrop-filter: blur(3px);
+  }
+}
+
+@layer utilities {
+  .glass {
+    background: var(--color-glass);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    backdrop-filter: blur(16px) saturate(1.4);
+    border: 1px solid var(--color-glass-line);
+  }
+  .panel-shadow {
+    box-shadow:
+      0 1px 2px rgba(8, 16, 24, 0.08),
+      0 12px 32px -12px rgba(8, 16, 24, 0.32);
+  }
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+}

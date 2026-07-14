@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "A life list for the world's waterways: check off the rivers you've visited, painted on a map. Yours forever, no account.",
+  "description": "A life list for the world's waterways: check off the rivers you've visited, painted on a map.",
   "license": "MIT",
   "author": "General Text & Computing Company",
   "homepage": "https://www.generaltext.org",

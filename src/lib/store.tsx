@@ -18,6 +18,7 @@ import { type Actor, type Draft, type RiversEvent, parseEvent, serializeEvent, v
 import { foldEvents, type State } from './reducer'
 import { newId, ulid } from './ids'
 import { PATHS, PERSON_COLORS, type Person } from './types'
+import { buildDemoSeed } from './seed'
 
 interface StoreValue {
   state: State
@@ -144,8 +145,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         const hasPerson = events.some((e) => e.type === 'person.create')
         if (!hasPerson) {
           seeded.current = true
-          const id = await addPerson(me.name, PERSON_COLORS[0])
-          setActivePerson(id)
+          // In a demo context (gallery "try it live" or the standalone demo) seed
+          // sample people + visited rivers so the map opens alive. In a real
+          // workspace just create the one default person. Never seed real data.
+          const isDemo = window.gt.mode === 'demo' || window.__riversDemo === true
+          if (isDemo) {
+            const { drafts, activeId } = buildDemoSeed(me)
+            await dispatch(drafts)
+            setActivePerson(activeId)
+          } else {
+            const id = await addPerson(me.name, PERSON_COLORS[0])
+            setActivePerson(id)
+          }
         }
       }
     })()

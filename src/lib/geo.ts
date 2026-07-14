@@ -1,11 +1,20 @@
 // The bundled river + land geometry. Both files are baked into the build (see
-// scripts/build-data.mjs), so the app is fully offline: no tiles, no network, and
-// under the app sandbox it literally cannot phone home. Rivers come from Natural
-// Earth (public domain), grouped so one logical river is one feature.
+// scripts/build-data.mjs → scripts/build-topo.mjs), so the app is fully offline: no
+// tiles, no network, and under the app sandbox it literally cannot phone home. Rivers
+// come from Natural Earth (public domain), grouped so one logical river is one feature.
+//
+// Ships as TopoJSON (delta-encoded integers on a quantized grid) — roughly half the
+// bytes of the raw GeoJSON — and is decoded straight back to GeoJSON here at load, so
+// everything downstream (RiverMap, poster, list) still sees plain d3-geo features.
+//
+// `rivers-full` is the lossless-ish variant (every river + vertex, ~100m precision).
+// To ship the smaller, generalized variant instead (~1/2 the size, every river kept
+// but shapes simplified), swap the import below for '~/data/rivers-lite.topo.json'.
 
 import { geoCentroid, type GeoPermissibleObjects } from 'd3-geo'
-import riversData from '~/data/rivers.json'
-import landData from '~/data/land.json'
+import { feature } from 'topojson-client'
+import riversTopo from '~/data/rivers-full.topo.json'
+import landTopo from '~/data/land.topo.json'
 import type { River } from './types'
 
 export interface RiverProps {
@@ -24,8 +33,13 @@ interface FeatureCollectionLike {
   features: RiverFeature[]
 }
 
-export const RIVER_FEATURES = (riversData as unknown as FeatureCollectionLike).features
-export const LAND = landData as unknown as GeoJSON.FeatureCollection
+// Decode the topologies back into GeoJSON FeatureCollections. `feature()` expands the
+// named object; both were written as a single object per file (see build-topo.mjs).
+const riversFc = feature(riversTopo, (riversTopo as { objects: { rivers: unknown } }).objects.rivers)
+const landFc = feature(landTopo, (landTopo as { objects: { land: unknown } }).objects.land)
+
+export const RIVER_FEATURES = (riversFc as unknown as FeatureCollectionLike).features
+export const LAND = landFc as unknown as GeoJSON.FeatureCollection
 
 export const RIVERS: River[] = RIVER_FEATURES.map((f) => f.properties)
 

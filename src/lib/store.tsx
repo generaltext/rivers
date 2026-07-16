@@ -140,6 +140,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       const me = await resolveMe()
       if (done) return
       meRef.current = me
+      // `ready` only means the workspace connected; the events file's content
+      // arrives after. Wait for it to sync before deciding to seed, or we'd read
+      // an empty file, see no person, and create a fresh duplicate on every open.
+      await window.gt.whenFileSynced(PATHS.events)
+      if (done) return
       if (!seeded.current) {
         const events = parseAll(window.gt.subscribeFile(PATHS.events).toString())
         const hasPerson = events.some((e) => e.type === 'person.create')
